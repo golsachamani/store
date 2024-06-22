@@ -12,3 +12,4 @@ def show_data(request):
 # contain samthings -> products = Product.objects.filter(name__contain=Site) -> thos queryset return data that have Site word this is casesensitive if add i to contain ->icontain this is not casesensitive
 # inventory__in=(1,4) -> in means instance that return 1 and 4 inventory in database
 # queryset = Customer.objects.filter(barth_date__isnull=True) -> RETURN customer that their birth date is empyty or null
+# queryset = Product.objects.filter(inventory__gt =5).filter(name__icontains='he').filter(create_time__year=2021) ---> this queryset show we can do many filter beside each other
