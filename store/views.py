@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from . models import *
 def show_data(request):
-    product = Product.objects.filter(inventory__lt=5)
+    product = Product.objects.filter(category__title__icontains= 'he')
    
     return render(request, 'hello.html', {'products': list(product)})
 # less than
