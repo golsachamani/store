@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from . models import *
 from django.db.models import Q, F
 def show_data(request):
-    product = Product.objects.filter(category__title__icontains= 'he')
-   
+    #product = Product.objects.filter(category__title__icontains= 'he')
+    product = Product.objects.order_by('-inventory').values('name', 'inventory')
     return render(request, 'hello.html', {'products': list(product)})
 # less than
 # greater than
@@ -19,3 +19,10 @@ def show_data(request):
 # Q object
 # F object --> queryset = OrderItem.objects.filter(product__id= F('quantity')) --> this query says product id equall to quantity return this quary 
 # indexing --> Product.objects.all()[:10] return first 10 number
+# queryset_orderitem_products = OrderItem.objects.values('product__id').distinct()
+#qeryset = Product.objects.filter(id__in=queryset_orderitem_products)
+# .values()--> return dictionary 
+# .value.lisdt()--> return as tuple in list
+# .defer('x') --> return all field except x
+# queryset = OrderItem.objects.select_related('order').all() --> bro to order ke forignkey khorde hame fieldasho harahe hame fieldae orderirem biar dar select_related yani oun model oun field dare forignkey khorde be modele dg (az OrderItem miresim be Order)
+# queryset = Product.objects.prefetch_related('order_items').all() --> in dare az product mirese be orderitem yani boro product haye ro biar ke orderitem oun mosave x ----order_items -->related_name ke az orderitem forignkey khorde be product boro ounhaye payda kon forignkey khordan be product (az Orderitem miresim be product)
