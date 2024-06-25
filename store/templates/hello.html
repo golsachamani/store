@@ -2,9 +2,11 @@
     <body>
         {% for product in products%}
           <h3>{{product.name}}</h3>  
-            
-            <h1>{{product.inventory}}</h1>
-            
+          {% for order_item in product.order_items.all%}  
+            {{order_item.id}}
+          {% endfor%}
+   
         {%endfor%}
     </body>
 </html>
+ <!-- queryset = Product.objects.prefetch_related('order_items').all() in dare az product mirese be orderitem yani boro product haye ro biar ke orderitem oun mosave x ----order_items related_name ke az orderitem forignkey khorde be product boro ounhaye payda kon forignkey khordan be product (az Orderitem miresim be product)  -->
