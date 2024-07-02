@@ -1,3 +1,5 @@
+# queryset = Product.object.get(id=5) --> yani tak onswor behem bede
+
 # less than
 # greater than
 #greater than or equal to
@@ -8,7 +10,8 @@
 # queryset = Product.objects.filter(inventory__gt =5).filter(name__icontains='he').filter(create_time__year=2021) ---> this queryset show we can do many filter beside each other and we can show filter(inventory__gt =5 ,name__icontains='he', create_time__year=2021 )
 #queryset_jean = Customer.objects.filter(first_name__icontains='jean)
 # queryset = Order.objects.filter(customer__in=queryset_john)
-# Q object
+# Q object--> qureyset= Product.objects.filter(Q(INVENTORY__gt=5) | Q(inventory__ld=12))
+# .filter(~Q(inventory__gt=3)) -->tu in filter mige axe anjam bede
 # F object --> queryset = OrderItem.objects.filter(product__id= F('quantity')) --> this query says product id equall to quantity return this quary 
 # indexing --> Product.objects.all()[:10] return first 10 number
 # queryset_orderitem_products = OrderItem.objects.values('product__id').distinct()
@@ -35,3 +38,18 @@
 #queryset = OrderItem.objects.annotate(total_price = F('quantity')*F('unit_price)) --> fielde be esme total_price be query ma ezafe mishe
 
 # group by --> queryset = Order.objects.annotate(count= Count(items)) items dar inja darvagh related_name order ba orderitem tu model
+
+
+# CHETOR MITUNIM YE OBJECTS BESAZIM --> 2ravesh dare:
+# 1 --> comment = Comment.objects.create(
+#name = 'x',
+# body = 'ilove u',
+#product = product,
+#) --> product = Product.objects.get(id=1)
+
+#2-->
+# new_comment = Comment()
+#new_comment.name = 'x'
+#new_comment.body = 'lllll'
+#new_comment.product = product
+#new_comment.save()
