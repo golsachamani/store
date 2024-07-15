@@ -114,7 +114,7 @@ admin.site.register(Cart)
 admin.site.register(CartItem)
 
 @admin.register(Customer)
-class CustomwrAdmin(admin.ModelAdmin):
+class CustomAdmin(admin.ModelAdmin):
     list_display=['first_name', 'last_name', 'email'] 
     list_per_page = 10
     ordering = ['first_name', 'last_name']
