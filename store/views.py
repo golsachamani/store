@@ -1,17 +1,30 @@
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
-from rest_framework.viewsets import ModelViewSet 
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.filters import OrderingFilter,SearchFilter 
 from store.serializers import  CategorySerializer, CommentSerializer, ProductSerializer
 from . models import *
 
 class ProductViewSet(ModelViewSet):
    serializer_class =ProductSerializer
-   queryset =Product.objects.select_related('category').all()
+   queryset =Product.objects.all()
+   filter_backends =[DjangoFilterBackend,OrderingFilter,SearchFilter]
+   filterset_fields =['category_id']
+   ordering_fields =['name', 'unit_price', 'inventory']
+   search_fields =['name']
+   # def get_queryset(self):
+   #    queryset= Product.objects.all()
+   #    category_id_parameters=self.request.query_params.get('category_id')
+   #    if category_id_parameters is not None:
+   #       queryset = queryset.filter(category_id=category_id_parameters)
+
+      # return super().get_queryset()
    # def get_serializer_class(self):
    #     return ProductSerializer
    # def get_queryset(self):
@@ -46,7 +59,10 @@ class CommentViewSet(ModelViewSet):
     
     def get_queryset(self):
         product_pk = self.kwargs['product_pk']
-        return  Comment.objects.filter(produck_id=product_pk).all()
+        return  Comment.objects.filter(product_id=product_pk).all()
+    
+    def get_serializer_context(self):
+        return {'product_pk':self.kwargs['product_pk']}
 
 
 
