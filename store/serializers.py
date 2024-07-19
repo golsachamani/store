@@ -39,3 +39,52 @@ class CommentSerializer(serializers.ModelSerializer):
      def create(self, validated_data):
           product_id =self.context['product_pk']
           return Comment.objects.create(product_id=product_id,**validated_data)
+     
+
+class CartProductSerializer(serializers.ModelSerializer):
+     class Meta:
+          model =Product
+          fields =['id', 'name', 'unit_price']
+
+class UpdateCartItemSerializer(serializers.ModelSerializer):
+     class Meta:
+          model = CartItem
+          fields = ['quantity']
+
+
+class AddCartItemSerializer(serializers.ModelSerializer):
+     class Meta:
+          model =CartItem
+          fields = ['id','product', 'quantity']
+     def create(self, validated_data):
+          cart_id = self.context['cart_pk']
+          product = validated_data.get('product')
+          quantity = validated_data.get('quantity')
+          try:
+               cart_item = CartItem.objects.filter(cart_id=cart_id,product_id=product.id)
+               cart_item.quantity += quantity
+               cart_item.save()
+          except CartItem.DoesNotExist:
+               CartItem.objects.create(cart_id = cart_id,**validated_data)
+  
+          self.instance = cart_item
+          return cart_item
+class CartItemSerializer(serializers.ModelSerializer):
+     product = CartProductSerializer()
+     item_total = serializers.SerializerMethodField()
+     class Meta:
+          model = CartItem
+          fields =['id', 'product', 'quantity', 'item_total']
+     def get_item_total(self, cart_items):
+               return cart_items.quantity * cart_items.product.unit_price
+     
+class CartSerializer(serializers.ModelSerializer):
+     total_price =serializers.SerializerMethodField()
+     items = CartItemSerializer(many =True,read_only =True)
+     # id = serializers.UUIDField(read_only =True)
+     class Meta:
+          model = Cart
+          fields = ['id','created_at','items','total_price']
+          read_only_fields =['id', ]
+     def get_total_price(self, cart):
+          return sum([item.quantity * item.product.unit_price for item in cart.items.all()])

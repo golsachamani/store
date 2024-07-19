@@ -110,7 +110,6 @@ class CommmentAdmin(admin.ModelAdmin):
     autocomplete_fields =['product']
 
 admin.site.register(OrderItem)
-admin.site.register(Cart)
 admin.site.register(CartItem)
 
 @admin.register(Customer)
@@ -119,3 +118,13 @@ class CustomAdmin(admin.ModelAdmin):
     list_per_page = 10
     ordering = ['first_name', 'last_name']
     search_fields=['first_name__istartwith', 'last_name__istartwith']
+class CartItemInline(admin.TabularInline):
+    model =CartItem
+    fields =['id', 'product','quantity']
+    extra =0
+    min_num =1
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['id','created_at' ]
+    inlines = [CartItemInline]

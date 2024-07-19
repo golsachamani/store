@@ -5,10 +5,14 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView,mixins
+from rest_framework.viewsets import ModelViewSet,GenericViewSet
 from rest_framework.filters import OrderingFilter,SearchFilter 
-from store.serializers import  CategorySerializer, CommentSerializer, ProductSerializer
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin,RetrieveModelMixin
+
+from rest_framework.pagination import PageNumberPagination
+from store.pagination import DefualtPagination
+from store.serializers import    AddCartItemSerializer, CartItemSerializer, CartSerializer, CategorySerializer, CommentSerializer, ProductSerializer, UpdateCartItemSerializer
 from . models import *
 
 class ProductViewSet(ModelViewSet):
@@ -18,6 +22,7 @@ class ProductViewSet(ModelViewSet):
    filterset_fields =['category_id']
    ordering_fields =['name', 'unit_price', 'inventory']
    search_fields =['name']
+   pagination_class =DefualtPagination
    # def get_queryset(self):
    #    queryset= Product.objects.all()
    #    category_id_parameters=self.request.query_params.get('category_id')
@@ -64,9 +69,28 @@ class CommentViewSet(ModelViewSet):
     def get_serializer_context(self):
         return {'product_pk':self.kwargs['product_pk']}
 
+class CartViewSet(ModelViewSet):
+    serializer_class = CartSerializer
+    queryset = Cart.objects.prefetch_related('items__product').all()
 
 
-
+class CartItemViewSet(ModelViewSet):
+   http_method_names =['get', 'post', 'patch', 'delete']
+   def get_queryset(self):
+        cart_pk = self.kwargs['cart_pk']
+        return  CartItem.objects.select_related('product').filter(cart_id=cart_pk).all()
+    
+   def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return AddCartItemSerializer
+        elif self.request.method == 'PAT.CH':
+            return UpdateCartItemSerializer
+        else:
+            return CartItemSerializer
+   def get_serializer_context(self):
+        return {'cart_pk':self.kwargs['cart_pk']}
+        
+    
 
 
 

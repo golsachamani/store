@@ -1,5 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from uuid import uuid4,UUID
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Category(models.Model):
     title = models.CharField(max_length=255)
@@ -99,9 +103,16 @@ class Comment(models.Model):
     status = models.CharField(max_length=2, choices=COMMENT_STATUS, default=COMMENT_STATUS_WAITING)
     ApprovedObjects = ApprovedCommentManager()
     objects = models.Manager()
+    
+    
 
 class Cart(models.Model):
+     
+
+    # id = models.UUIDField(primary_key=True, default=uuid4,editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+       
 
 
 class CartItem(models.Model):
